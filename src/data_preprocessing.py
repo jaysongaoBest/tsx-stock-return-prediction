@@ -68,8 +68,15 @@ def add_features(df: pd.DataFrame) -> pd.DataFrame:
     featured["log_volume"] = np.log1p(featured["volume"])
 
     featured["target_next_return"] = grouped["daily_return"].shift(-1)
-    featured["target_next_positive"] = featured["target_next_return"].gt(0).astype(int)
 
+featured["target_next_positive"] = (
+    featured["target_next_return"] > 0
+).astype("Int64")
+
+featured.loc[
+    featured["target_next_return"].isna(),
+    "target_next_positive"
+] = pd.NA
     return featured
 
 
