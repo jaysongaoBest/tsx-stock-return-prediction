@@ -81,24 +81,19 @@ def train_models() -> None:
         class_weight="balanced",
     )
 
+    
+    # Train models
     linear_model.fit(x_train, y_train_reg)
     logistic_model.fit(x_train, y_train_cls)
     tree_model.fit(x_train, y_train_cls)
     forest_model.fit(x_train, y_train_cls)
-    # Baseline: always predict the most frequent class in training data
-     linear_model.fit(x_train, y_train_reg)
-    logistic_model.fit(x_train, y_train_cls)
-    tree_model.fit(x_train, y_train_cls)
-    forest_model.fit(x_train, y_train_cls)
 
-    # Baseline: predict the most frequent training class
+    # Majority class baseline
     baseline_model = DummyClassifier(strategy="most_frequent")
     baseline_model.fit(x_train, y_train_cls)
+
+    # Predictions
     baseline_predictions = baseline_model.predict(x_test)
-
-    reg_predictions = linear_model.predict(x_test)
-    log_predictions = logistic_model.predict(x_test)
-
 
     reg_predictions = linear_model.predict(x_test)
     log_predictions = logistic_model.predict(x_test)
