@@ -69,9 +69,6 @@ def add_features(df: pd.DataFrame) -> pd.DataFrame:
 
     featured["target_next_return"] = grouped["daily_return"].shift(-1)
 
-
-    featured["target_next_return"] = grouped["daily_return"].shift(-1)
-
     featured["target_next_positive"] = (
         featured["target_next_return"] > 0
     ).astype("Int64")
