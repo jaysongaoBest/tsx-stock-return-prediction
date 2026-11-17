@@ -69,15 +69,20 @@ def add_features(df: pd.DataFrame) -> pd.DataFrame:
 
     featured["target_next_return"] = grouped["daily_return"].shift(-1)
 
-featured["target_next_positive"] = (
-    featured["target_next_return"] > 0
-).astype("Int64")
 
-featured.loc[
-    featured["target_next_return"].isna(),
-    "target_next_positive"
-] = pd.NA
+    featured["target_next_return"] = grouped["daily_return"].shift(-1)
+
+    featured["target_next_positive"] = (
+        featured["target_next_return"] > 0
+    ).astype("Int64")
+
+    featured.loc[
+        featured["target_next_return"].isna(),
+        "target_next_positive"
+    ] = pd.NA
+
     return featured
+
 
 
 def build_modeling_dataset(path: str | Path) -> pd.DataFrame:
@@ -85,7 +90,10 @@ def build_modeling_dataset(path: str | Path) -> pd.DataFrame:
     df = add_features(load_raw_data(path))
     feature_columns = get_feature_columns()
     required = feature_columns + ["target_next_return", "target_next_positive"]
-    return df.dropna(subset=required).reset_index(drop=True)
+    
+    cleaned = df.dropna(subset=required).copy()
+    cleaned["target_next_positive"] = cleaned["target_next_positive"].astype(int)
+    return cleaned.reset_index(drop=True)
 
 
 def get_feature_columns() -> list[str]:
