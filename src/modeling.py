@@ -11,6 +11,7 @@ import seaborn as sns
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LinearRegression, LogisticRegression
+from sklearn.dummy import DummyClassifier
 from sklearn.metrics import (
     ConfusionMatrixDisplay,
     accuracy_score,
@@ -84,6 +85,11 @@ def train_models() -> None:
     logistic_model.fit(x_train, y_train_cls)
     tree_model.fit(x_train, y_train_cls)
     forest_model.fit(x_train, y_train_cls)
+    # Baseline: always predict the most frequent class in training data
+baseline_model = DummyClassifier(strategy="most_frequent")
+baseline_model.fit(x_train, y_train_cls)
+
+baseline_predictions = baseline_model.predict(x_test)
 
     reg_predictions = linear_model.predict(x_test)
     log_predictions = logistic_model.predict(x_test)
@@ -108,6 +114,9 @@ def train_models() -> None:
     print(f"Accuracy: {accuracy_score(y_test_cls, log_predictions):.4f}")
     print(f"ROC AUC:  {roc_auc_score(y_test_cls, log_probabilities):.4f}")
     print(classification_report(y_test_cls, log_predictions))
+    print("Majority Class Baseline")
+    print(f"Accuracy: {accuracy_score(y_test_cls, baseline_predictions):.4f}")
+    print()
 
     print("Decision Tree: next-day positive return classification")
     print(f"Accuracy: {accuracy_score(y_test_cls, tree_predictions):.4f}")
